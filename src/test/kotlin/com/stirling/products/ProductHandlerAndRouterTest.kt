@@ -39,7 +39,7 @@ class ProductHandlerAndRouterTest {
     @Test
     fun `get all products`() {
 
-        webTestClient.get().uri("/products")
+        webTestClient.get().uri("/products/")
                 .exchange()
                 .expectStatus().is2xxSuccessful
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ class ProductHandlerAndRouterTest {
         every { productService.create(any()) } returns Mono.just(Product("salt", "marine salt", BigDecimal(0.5), "1"))
 
         webTestClient.post()
-                .uri("/products")
+            .uri("/products/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(Product("salt", "marine salt", BigDecimal(0.5))), Product::class.java)
                 .exchange()
