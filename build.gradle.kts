@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.5.4"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
+	id("org.sonarqube") version "3.3"
+	id("jacoco")
 	kotlin("jvm") version "1.5.30"
 	kotlin("plugin.spring") version "1.5.30"
 }
@@ -15,6 +17,10 @@ configurations {
 	compileOnly {
 		extendsFrom(configurations.annotationProcessor.get())
 	}
+}
+
+tasks.named("sonarqube") {
+	dependsOn(tasks.named("jacocoTestReport"))
 }
 
 repositories {
@@ -40,13 +46,29 @@ dependencies {
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
 
+jacoco {
+	toolVersion = "0.8.7"
+	reportsDirectory.set(layout.buildDirectory.dir("reports"))
+}
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.test {
+	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+	dependsOn(tasks.test) // tests are required to run before generating the report
+	reports {
+		xml.required.set(true)
+		html.required.set(false)
+	}
 }
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "1.8"
+		jvmTarget = "11"
 	}
 }
