@@ -6,7 +6,7 @@ plugins {
 	id("org.sonarqube") version "3.3"
 	id("jacoco")
 	kotlin("jvm") version "1.5.30"
-	kotlin("plugin.spring") version "1.5.30"
+	kotlin("plugin.spring") version "1.6.10"
 }
 
 group = "com.stirling"
